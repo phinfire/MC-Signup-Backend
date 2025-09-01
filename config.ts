@@ -6,6 +6,10 @@ export const CLIENT_SECRET = process.env.DISCORD_CLIENT_SECRET as string;
 export const JWT_SECRET = process.env.JWT_SECRET as string;
 export const PORT = Number(process.env.PORT!);
 
+
+export const ADMIN_DISCORD_ID = process.env.ADMIN_DISCORD_ID as string;
+export const MODERATOR_IDS = (process.env.MODERATOR_IDS?.split(',') || []).map(id => id.trim());
+
 export const allowedOrigins = [
     'http://localhost',
     process.env.ALLOWED_ORIGIN!

@@ -1,13 +1,6 @@
 import pool from './pool';
+import { Signup } from '../entities/Signup';
 
-export async function getAllSignups(): Promise<any[]> {
-    await createSignupsTable();
-    const result = await pool.query('SELECT * FROM signups');
-    return result.rows.map(row => ({
-        ...row,
-        picks: JSON.parse(row.picks)
-    }));
-}
 export async function createSignupsTable() {
     await pool.query(`
         CREATE TABLE IF NOT EXISTS signups (
@@ -17,6 +10,20 @@ export async function createSignupsTable() {
             timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
         );
     `);
+}
+
+export async function getAllSignups(): Promise<Signup[]> {
+    await createSignupsTable();
+    const result = await pool.query('SELECT * FROM signups');
+    return result.rows.map((row: {
+        id: number;
+        discord_id: string;
+        picks: string;
+        timestamp: Date;
+    }) => ({
+        ...row,
+        picks: JSON.parse(row.picks)
+    }));
 }
 
 export async function updateSignup(userId: string, picks: string[]) {

@@ -1,24 +1,15 @@
 import express, { Request, Response } from 'express';
-import jwt from 'jsonwebtoken';
-import { JWT_SECRET } from '../config';
+import { authenticateToken } from '../middleware/auth';
 import { getDiscordUser } from '../db/user_db';
 
 const router = express.Router();
 
-router.get('/', async (req: Request, res: Response) => {
+router.get('/', authenticateToken, async (req: Request, res: Response) => {
     try {
-        const authHeader = req.headers.authorization;
-        if (!authHeader || !authHeader.startsWith('Bearer ')) {
-            return res.status(401).json({ error: 'Missing or invalid Authorization header' });
+        if (!req.user) {
+            return res.status(400).json({ error: 'Missing user' });
         }
-        const token = authHeader.slice(7);
-        let payload: any;
-        try {
-            payload = jwt.verify(token, JWT_SECRET);
-        } catch (err) {
-            return res.status(401).json({ error: 'Invalid or expired token' });
-        }
-        const discordId = payload.discordId;
+        const discordId = req.user?.discordId;
         if (!discordId) {
             return res.status(400).json({ error: 'Token missing discordId' });
         }

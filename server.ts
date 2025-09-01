@@ -8,8 +8,10 @@ import healthRoutes from './routes/health';
 import signups from './routes/signups';
 import userRoutes from './routes/getUser';
 import getSignupRoutes from './routes/getSignup';
-import userPostRoutes from './routes/user';
 import adminSignupsRoutes from './routes/adminSignups';
+import signedUpUsernamesRoutes from './routes/signedUpUsernames';
+import moderatorGetAssignmentsRoutes from './routes/moderator/getAssignmentsForAllSignedUpUsers';
+import moderatorUpdateAssignmentsRoutes from './routes/moderator/updateAssignments';
 
 const app = express();
 
@@ -29,8 +31,11 @@ app.use('/api/signup', registerRoutes);
 app.use('/api/health', healthRoutes);
 app.use('/api/signups', signups);
 app.use('/api/getsignup', getSignupRoutes);
-app.use('/api/userpost', userPostRoutes);
-app.use(adminSignupsRoutes);
+app.use('/api/admin/signups', adminSignupsRoutes);
+app.use('/api/signedupusernames', signedUpUsernamesRoutes);
 
-app.listen(PORT, () => console.log(`Discord OAuth backend running on port ${PORT}`));
+app.use('/api/moderator/getAssignmentsForAllSignedUpUsers', moderatorGetAssignmentsRoutes);
+app.use('/api/moderator/updateAssignments', moderatorUpdateAssignmentsRoutes);
+
+app.listen(PORT, () => console.log(`Running on port ${PORT}`));
 
