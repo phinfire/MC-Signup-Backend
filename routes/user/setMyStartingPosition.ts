@@ -2,14 +2,14 @@ import express, { Request, Response } from 'express';
 import { authenticateToken } from '../../middleware/auth';
 import { getAssignmentForUser } from '../../middleware/assignments';
 import { setStartingPosition } from '../../db/assignments';
-import { getUserPicks } from '../../db/registrations';
+import { getRegionPicksByUser } from '../../db/registrations';
 
 const router = express.Router();
 
 
 router.post('/', authenticateToken, async (req: Request, res: Response) => {
     const discordId = req.user!.discordId;
-    const picks = await getUserPicks(discordId);
+    const picks = await getRegionPicksByUser(discordId);
     if (picks.length === 0) {
         return res.status(400).json({ error: 'User has not signed up yet.' });
     }

@@ -3,20 +3,11 @@ import cors from 'cors';
 import bodyParser from 'body-parser';
 import { PORT, allowedOrigins, ADMIN_DISCORD_ID, MODERATOR_IDS } from './config';
 import authRoutes from './routes/auth';
-import registerRoutes from './routes/signup';
+import signupRoutes from './routes/signup';
 import healthRoutes from './routes/health';
-import signups from './routes/signups';
-import userRoutes from './routes/getUser';
-import getSignupRoutes from './routes/getSignup';
-import adminSignupsRoutes from './routes/adminSignups';
-import signedUpUsernamesRoutes from './routes/signedUpUsernames';
-import removeSignupRoutes from './routes/admin/removeSignup';
-import moderatorGetAssignmentsRoutes from './routes/moderator/getAssignmentsForAllSignedUpUsers';
-import moderatorUpdateAssignmentsRoutes from './routes/moderator/updateAssignments';
-import moderatorGetSignupsRoutes from './routes/moderator/getSignups';
-import getMyAssignmentRoutes from './routes/user/getMyAssignment';
-import setMyStartingPositionRoutes from './routes/user/setMyStartingPosition';
-import getAllRegionAssignments from './routes/user/getAllRegionAssignments';
+import userRoutes from './routes/user';
+import adminRoutes from './routes/admin/signups';
+import moderatorRoutes from './routes/moderator';
 
 const app = express();
 
@@ -30,23 +21,14 @@ app.use(cors({
     }
 }));
 app.use(bodyParser.json());
+
+// Routes
 app.use('/api/auth', authRoutes);
-app.use("/api/user", userRoutes);
-app.use('/api/user/getMyAssignment', getMyAssignmentRoutes);
-app.use('/api/user/setMyStartingPosition', setMyStartingPositionRoutes);
-app.use('/api/user/getAllRegionAssignments', getAllRegionAssignments);
-app.use('/api/signup', registerRoutes);
+app.use('/api/signup', signupRoutes);
+app.use('/api/user', userRoutes);
 app.use('/api/health', healthRoutes);
-app.use('/api/signups', signups);
-app.use('/api/getsignup', getSignupRoutes);
-app.use('/api/signedupusernames', signedUpUsernamesRoutes);
-
-app.use('/api/admin/signups', adminSignupsRoutes);
-app.use('/api/admin/removeSignup', removeSignupRoutes);
-
-app.use('/api/moderator/getSignups', moderatorGetSignupsRoutes);
-app.use('/api/moderator/getAssignmentsForAllSignedUpUsers', moderatorGetAssignmentsRoutes);
-app.use('/api/moderator/updateAssignments', moderatorUpdateAssignmentsRoutes);
+app.use('/api/admin/signups', adminRoutes);
+app.use('/api/moderator', moderatorRoutes);
 
 app.listen(PORT, () => {
     console.log(`Running on port ${PORT}`);

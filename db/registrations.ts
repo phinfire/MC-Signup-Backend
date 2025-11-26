@@ -74,7 +74,7 @@ export async function getPickCounts() {
         .sort((a, b) => b.count - a.count);
 }
 
-export async function getUserPicks(userId: string): Promise<string[]> {
+export async function getRegionPicksByUser(userId: string): Promise<string[]> {
     await createSignupsTable();
     const result = await pool.query(
         'SELECT picks FROM signups WHERE discord_id = $1 ORDER BY timestamp DESC LIMIT 1',
