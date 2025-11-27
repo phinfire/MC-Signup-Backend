@@ -1,4 +1,4 @@
-name: Deploy to VPS (discordbackend)
+name: Deploy to VPS
 
 on:
   push:
@@ -36,7 +36,7 @@ jobs:
       with:
         context: .
         push: true
-        tags: ghcr.io/${{ steps.owner.outputs.name }}/discordbackend:latest
+        tags: ghcr.io/${{ steps.owner.outputs.name }}/mcbackend:latest
 
     - name: Copy compose file to VPS
       uses: appleboy/scp-action@v0.1.7
@@ -45,7 +45,7 @@ jobs:
         username: ${{ secrets.SSH_USER }}
         key: ${{ secrets.SSH_KEY }}
         source: "./docker-compose.yml"
-        target: "/opt/discordbackend/"
+        target: "/opt/mcbackend/"
 
     - name: Deploy on VPS over SSH
       uses: appleboy/ssh-action@v0.1.7
@@ -54,19 +54,17 @@ jobs:
         username: ${{ secrets.SSH_USER }}
         key: ${{ secrets.SSH_KEY }}
         script: |
-          mkdir -p /opt/discordbackend
-          cd /opt/discordbackend
+          mkdir -p /opt/mcbackend
+          cd /opt/mcbackend
           
-          # Create .env if missing
-          if [ ! -f .env ]; then
-            cat > .env << EOF
-POSTGRES_USER=${{ secrets.POSTGRES_USER }}
-POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
-POSTGRES_DB=${{ secrets.POSTGRES_DB }}
-API_PORT=${{ secrets.API_PORT || 8000 }}
-EOF
-          fi
-          
-          docker compose pull
-          docker compose up -d --remove-orphans
-          docker system prune -f
+          # Always recreate .env using GitHub secrets
+          cat > .env << EOF
+            POSTGRES_USER=${{ secrets.POSTGRES_USER }}
+            POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
+            POSTGRES_DB=${{ secrets.POSTGRES_DB }}
+            REPO_OWNER=${{ steps.owner.outputs.name }}
+            EOF
+                    
+                    docker compose pull
+                    docker compose up -d --remove-orphans
+                    docker system prune -f

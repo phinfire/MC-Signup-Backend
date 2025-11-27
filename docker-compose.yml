@@ -1,6 +1,6 @@
 services:
   api:
-    image: ghcr.io/${REPO_OWNER}/discordbackend:latest
+    image: ghcr.io/${REPO_OWNER}/mcbackend:latest
     env_file:
       - .env
     depends_on:
