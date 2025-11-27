@@ -1,8 +1,8 @@
-name: Deploy to VPS
+name: Deploy to VPS (discordbackend)
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "master" ]
   workflow_dispatch:
 
 permissions:
@@ -17,12 +17,10 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    # ---- LOWERCASE OWNER FOR GHCR ----
     - name: Convert owner to lowercase
       id: owner
       run: echo "name=$(echo ${{ github.repository_owner }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
 
-    # ---- BUILD & PUSH TO GHCR ----
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
 
@@ -40,67 +38,35 @@ jobs:
         push: true
         tags: ghcr.io/${{ steps.owner.outputs.name }}/discordbackend:latest
 
-    # ---- COPY COMPOSE FILES TO VPS ----
-    - name: Copy compose files to VPS
+    - name: Copy compose file to VPS
       uses: appleboy/scp-action@v0.1.7
       with:
         host: ${{ secrets.SSH_HOST }}
         username: ${{ secrets.SSH_USER }}
         key: ${{ secrets.SSH_KEY }}
-        source: |
-          ./docker-compose.yml
-          ./docker-compose.override.yml
-        target: /opt/discordbackend/
+        source: "./docker-compose.yml"
+        target: "/opt/discordbackend/"
 
-    # ---- SSH DEPLOY ----
-    - name: Deploy on VPS via SSH
+    - name: Deploy on VPS over SSH
       uses: appleboy/ssh-action@v0.1.7
       with:
         host: ${{ secrets.SSH_HOST }}
         username: ${{ secrets.SSH_USER }}
         key: ${{ secrets.SSH_KEY }}
         script: |
-          set -e
+          mkdir -p /opt/discordbackend
           cd /opt/discordbackend
-
+          
           # Create .env if missing
           if [ ! -f .env ]; then
-            cat > .env << 'EOF'
+            cat > .env << EOF
 POSTGRES_USER=${{ secrets.POSTGRES_USER }}
 POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
 POSTGRES_DB=${{ secrets.POSTGRES_DB }}
-JWT_SECRET=${{ secrets.JWT_SECRET }}
-CLIENT_ID=${{ secrets.CLIENT_ID }}
-CLIENT_SECRET=${{ secrets.CLIENT_SECRET }}
-ADMIN_DISCORD_ID=${{ secrets.ADMIN_DISCORD_ID }}
-MODERATOR_IDS=${{ secrets.MODERATOR_IDS }}
-API_PORT=${{ secrets.API_PORT || 3000 }}
+API_PORT=${{ secrets.API_PORT || 8000 }}
 EOF
           fi
-
-          # Inject GHCR owner
-          REPO_OWNER=${{ steps.owner.outputs.name }}
-          sed -i "s|\${REPO_OWNER}|$REPO_OWNER|g" docker-compose.yml
-
-          # Pull latest image
-          docker pull ghcr.io/$REPO_OWNER/discordbackend:latest
+          
           docker compose pull
           docker compose up -d --remove-orphans
-
           docker system prune -f
-
-    # ---- VERIFY DEPLOY ----
-    - name: Verify deployment
-      uses: appleboy/ssh-action@v0.1.7
-      with:
-        host: ${{ secrets.SSH_HOST }}
-        username: ${{ secrets.SSH_USER }}
-        key: ${{ secrets.SSH_KEY }}
-        script: |
-          cd /opt/discordbackend
-
-          echo "=== Docker Compose Status ==="
-          docker compose ps
-
-          echo "=== API Health ==="
-          curl -f http://localhost:3000/api/health || echo "Health check not ready yet..."
