@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 import { authenticateToken } from '../middleware/auth';
 import { getAssignmentForUser } from '../middleware/assignments';
-import { setStartingPosition, getAllAssignments } from '../db/assignments';
+import { setStartingPosition } from '../db/assignments';
 import { getDiscordUser } from '../db/user_db';
 import { getRegionPicksByUser } from '../db/registrations';
 import { asyncHandler } from '../middleware/asyncHandler';
@@ -39,18 +39,6 @@ router.get('/assignment', authenticateToken, asyncHandler(async (req: Request, r
         return res.status(204).json({ error: 'No assignment found for user.' });
     }
     res.json({ assignment });
-}));
-
-/**
- * GET /api/user/assignments/region
- * Get all region assignments
- */
-router.get('/assignments/region', authenticateToken, asyncHandler(async (req: Request, res: Response) => {
-    const assignments = await getAllAssignments();
-    if (assignments.length === 0) {
-        return res.status(204).send();
-    }
-    res.json({ assignments });
 }));
 
 /**

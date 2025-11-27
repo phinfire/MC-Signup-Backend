@@ -1,19 +1,10 @@
 import express, { Request, Response } from 'express';
-import { getAllSignups, removeSignup as removeSignupFromDb } from '../../db/registrations';
+import { removeSignup as removeSignupFromDb } from '../../db/registrations';
 import { removeAssignment } from '../../db/assignments';
-import { requireAdminAuth, requireModeratorAuth } from '../../middleware/auth';
+import { requireAdminAuth } from '../../middleware/auth';
 import { asyncHandler } from '../../middleware/asyncHandler';
 
 const router = express.Router();
-
-/**
- * GET /api/admin/signups
- * Get all signups (moderator+ access)
- */
-router.get('/', requireModeratorAuth, asyncHandler(async (req: Request, res: Response) => {
-    const signups = await getAllSignups();
-    res.json({ signups });
-}));
 
 /**
  * DELETE /api/admin/signups/:discordId

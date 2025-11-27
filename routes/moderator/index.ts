@@ -9,18 +9,27 @@ const router = express.Router();
 
 /**
  * GET /api/moderator/signups
- * Get all signups with full details
+ * Get all signups (basic list, moderator+ access)
  */
 router.get('/signups', requireModeratorAuth, asyncHandler(async (req: Request, res: Response) => {
+    const signups = await getAllSignups();
+    res.json({ signups });
+}));
+
+/**
+ * GET /api/moderator/signups/detailed
+ * Get all signups with full details (moderator+ access)
+ */
+router.get('/signups/detailed', requireModeratorAuth, asyncHandler(async (req: Request, res: Response) => {
     const signups = await getAllSignups(true);
     res.json({ signups });
 }));
 
 /**
  * GET /api/moderator/assignments
- * Get all assignments for signed up users
+ * Get all assignments for signed up users (public access)
  */
-router.get('/assignments', requireModeratorAuth, asyncHandler(async (req: Request, res: Response) => {
+router.get('/assignments', asyncHandler(async (req: Request, res: Response) => {
     const assignments = await getAssignmentsForAllSignedUpUsers();
     res.json({ assignments });
 }));
