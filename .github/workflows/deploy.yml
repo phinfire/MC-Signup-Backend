@@ -70,7 +70,6 @@ jobs:
           API_PORT=${{ secrets.API_PORT || 8000 }}
           PORT=${{ secrets.PORT || 3000 }}
           EOF
-          fi
           
           # Pull latest image and deploy
           docker compose pull
