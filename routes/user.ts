@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 import { authenticateToken } from '../middleware/auth';
 import { getAssignmentForUser } from '../middleware/assignments';
-import { setStartingPosition, getAllAssignments } from '../db/assignments';
+import { setStartingPosition } from '../db/assignments';
 import { getDiscordUser } from '../db/user_db';
 import { getRegionPicksByUser } from '../db/registrations';
 import { asyncHandler } from '../middleware/asyncHandler';
@@ -57,18 +57,6 @@ router.post('/startingPosition', authenticateToken, asyncHandler(async (req: Req
     }
     await setStartingPosition(discordId, start_key, start_data);
     res.status(200).json({ message: 'Starting position set successfully.' });
-}));
-
-/**
- * GET /api/user/assignments
- * Get all assignments (public access)
- */
-router.get('/assignments', asyncHandler(async (req: Request, res: Response) => {
-    const assignments = await getAllAssignments();
-    if (assignments.length === 0) {
-        return res.status(204).send();
-    }
-    res.json({ assignments });
 }));
 
 export default router;

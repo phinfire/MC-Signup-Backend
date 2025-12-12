@@ -24,8 +24,8 @@
 | **Assingment Routes** | | | | |
 | `/api/user` | GET | ✅ JWT | User | Get current user profile |
 | `/api/user/assignment` | GET | ✅ JWT | User | Get my current assignment |
-| `/api/user/assignments` | GET | ❌ None | Public | Get all assignments |
 | `/api/user/startingPosition` | POST | ✅ JWT | User | Set my starting position |
+| `/api/assignments` | GET | ❌ None | Public | Get all assignments for a campaign |
 | **Admin Routes** | | | | |
 | `/api/admin/signups/:discordId` | DELETE | ✅ JWT | Admin | Remove a signup |
 | **Moderator Routes** | | | | |
