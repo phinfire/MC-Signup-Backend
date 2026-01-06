@@ -2,7 +2,7 @@
 
 1. Admin creates new MegaCampaign (ssh)
 2. Install dependencies: run `npm install` or `yarn`.
-3. Configure environment: copy `.env.example` to `.env` and set `DATABASE_URL`, `DISCORD_CLIENT_ID`, `DISCORD_CLIENT_SECRET`, `JWT_SECRET`.
+3. Configure environment: copy `.env.example` to `.env` and set `AUTH_SERVICE_URL`, `ADMIN_DISCORD_ID`, `MODERATOR_IDS`, and database credentials.
 4. Database: run migrations and seeds (e.g., `npm run migrate` && `npm run seed`).
 5. Start the server: `npm start` (use `npm run dev` for local development).
 6. Tests: run `npm test` to execute the test suite.
