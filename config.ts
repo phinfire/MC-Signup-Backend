@@ -1,11 +1,8 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
-export const CLIENT_ID = process.env.DISCORD_CLIENT_ID as string;
-export const CLIENT_SECRET = process.env.DISCORD_CLIENT_SECRET as string;
-export const JWT_SECRET = process.env.JWT_SECRET as string;
+export const AUTH_SERVICE_URL = process.env.AUTH_SERVICE_URL || 'https://codingafterdark.de/authentication';
 export const PORT = Number(process.env.PORT!);
-
 
 export const ADMIN_DISCORD_ID = process.env.ADMIN_DISCORD_ID as string;
 export const MODERATOR_IDS = (process.env.MODERATOR_IDS?.split(',') || []).map(id => id.trim());

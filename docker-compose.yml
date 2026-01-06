@@ -1,10 +1,25 @@
 services:
+  auth:
+    build:
+      context: ../authService  # Update path to your auth service directory
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    environment:
+      PORT: 8001
+    ports:
+      - "8001:8001"
+    restart: unless-stopped
+
   api:
     build: .
     env_file:
       - .env
+    environment:
+      AUTH_SERVICE_URL: http://auth:8001
     depends_on:
       - db
+      - auth
     ports:
       - "3000:3000"
     volumes:

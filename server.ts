@@ -2,7 +2,6 @@ import express from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 import { PORT, allowedOrigins, ADMIN_DISCORD_ID, MODERATOR_IDS } from './config';
-import authRoutes from './routes/auth';
 import signupRoutes from './routes/signup';
 import healthRoutes from './routes/health';
 import userRoutes from './routes/user';
@@ -26,7 +25,6 @@ app.use(cors({
 app.use(bodyParser.json());
 
 
-app.use('/api/auth', authRoutes);
 app.use('/api/signup', signupRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/assignments', assignmentsRoutes);
